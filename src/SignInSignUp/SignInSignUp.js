@@ -8,22 +8,16 @@ function SignInSignupWithLocalStorage() {
     const password = useRef();
     const navigate = useNavigate();
 
-    const [showHome, setShowHome] = useState(false);
-    const [show, setHome] = useState(false);
-    
-   
-    const localSignUp = localStorage.getItem('signUp');
-    const localEmail = localStorage.getItem('email');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+    const localSignUp = localStorage.getItem("signUp");
 
+    // UseEffect to check if the user is already signed in
     useEffect(() => {
         if (localSignUp) {
-            setShowHome(true); 
+            setIsAuthenticated(true);
         }
-        if(localEmail){
-             setHome(true)
-        }
-    }); 
+    }, [localSignUp]); // Add localSignUp to the dependency array to avoid infinite loops
 
     const handleClick = () => {
         if (name.current.value && email.current.value && password.current.value) {
@@ -32,42 +26,46 @@ function SignInSignupWithLocalStorage() {
             localStorage.setItem("password", password.current.value);
             localStorage.setItem("signUp", email.current.value);
             alert("Account Created Successfully");
-            window.location.reload();
-            navigate('/'); 
+            navigate("/"); // Navigate without reloading the page
         }
     };
 
-    return (
-        <div>
-            {showHome ? <Home /> :
-            (show ?
-                <div className="h-screen flex items-center justify-center flex-col bg-red-100">
-                    <div className="input_space">
-                        <input placeholder="Name" type='text' ref={name} className="border border-black mb-5 py-2 w-96 px-5"  />
-                    </div>
-                    <div className="input_space">
-                        <input placeholder="email" type='text' ref={email} className="border border-black mb-5 py-2 w-96 px-5" />
-                    </div>
-                    <div className="input_space">
-                        <input placeholder="password" type='password' ref={password} className="border border-black mb-5 py-2 w-96 px-5" />
-                    </div>
-                    <button onClick={handleClick}  className="border border-black w-56 py-2 bg-red-300 text-white">Sign Up</button>
-                </div>
-                :
+    if (isAuthenticated) {
+        return <Home />; // If user is authenticated, render the Home component
+    }
 
-                <div className="h-screen flex items-center justify-center flex-col bg-red-100">
-                <div className="input_space">
-                    <input placeholder="Name" type='text' ref={name} className="border border-black mb-5 py-2 w-96 px-5" />
-                </div>
-                <div className="input_space">
-                    <input placeholder="email" type='text' ref={email} className="border border-black mb-5 py-2  w-96 px-5" />
-                </div>
-                <div className="input_space">
-                    <input placeholder="password" type='password' ref={password} className="border border-black mb-5 py-2 w-96 px-5" />
-                </div>
-                <button onClick={handleClick} className="border border-black w-56 py-2 bg-red-300 text-white">Sign Up</button>
-            </div>)
-            }
+    return (
+        <div className="h-screen flex items-center justify-center flex-col bg-red-100">
+            <div className="input_space">
+                <input
+                    placeholder="Name"
+                    type="text"
+                    ref={name}
+                    className="border border-black mb-5 py-2 w-96 px-5"
+                />
+            </div>
+            <div className="input_space">
+                <input
+                    placeholder="Email"
+                    type="email"
+                    ref={email}
+                    className="border border-black mb-5 py-2 w-96 px-5"
+                />
+            </div>
+            <div className="input_space">
+                <input
+                    placeholder="Password"
+                    type="password"
+                    ref={password}
+                    className="border border-black mb-5 py-2 w-96 px-5"
+                />
+            </div>
+            <button
+                onClick={handleClick}
+                className="border border-black w-56 py-2 bg-red-300 text-white"
+            >
+                Sign Up
+            </button>
         </div>
     );
 }
